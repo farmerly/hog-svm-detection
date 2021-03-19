@@ -1,8 +1,24 @@
 import pickle
 import os
+import cv2
 import numpy as np
 
 lableName = ['飞机', '汽车', '鸟', '猫', '鹿', '狗', '青蛙', '马', '船', '卡车']
+
+def pretreatment(pathname_):
+    dst_imgs_ = []
+    imglist_ = [cv2.imread(os.path.join(pathname_, file_)) for file_ in os.listdir(pathname_)]
+    for img_ in imglist_:
+        row_, col_, chn_ = img_.shape
+        # dst_row_ = row_ if row_ % 8 == 8 else row_ - row_ % 8
+        # dst_col_ = col_ if col_ % 8 == 8 else col_ - col_ % 8
+        # if row_ != dst_row_ or col_ != dst_col_:
+        #     dst_imgs_.append(cv2.resize(img_, (dst_col_, dst_row_)))
+        # else:
+        #     dst_imgs_.append(img_)
+        dst_imgs_.append(cv2.resize(img_, (32, 32)))
+    return dst_imgs_
+
 
 def load_CIFAR_batch(filename):
     """
@@ -40,6 +56,11 @@ def load_CIFAR10(ROOT):
 
 
 if __name__=='__main__':
+    imgList = pretreatment("data/cars_test")
+    for img in imgList:
+        cv2.imshow('image', img)
+        cv2.waitKey(0)
+    cv2.destroyAllWindows()
     x_train, y_train, x_test, y_test = load_CIFAR10('data/cifar10/')
     print(x_train.shape)
     print(y_train.shape)

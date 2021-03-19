@@ -1,3 +1,4 @@
+import os
 import cv2
 import common
 import numpy as np
@@ -12,17 +13,24 @@ def get_feature(img_, hog_, winStride):
     return feature_
 
 
+def pretreatment(pathname_):
+    imglist_ = [cv2.imread(os.path.join(pathname_, file_)) for file_ in os.listdir(pathname_)]
+    for img_ in imglist_:
+        row_, col_, chn_ = img_.shape
+        print(row_, col_)
+
+
 if __name__ == "__main__":
     print(common.get_local_time(), "程序运行开始")
     winSize = (32, 32)
-    blockSize = (8, 8)
-    blockStride = (4, 4)
-    cellSize = (4, 4)
+    blockSize = (16, 16)
+    blockStride = (8, 8)
+    cellSize = (8, 8)
     nbins = 9
     hog = cv2.HOGDescriptor(winSize, blockSize, blockStride, cellSize, nbins)
     x_train, y_train, x_test, y_test = datasets.load_CIFAR10('data/cifar10/')
     grays = np.array([cv2.cvtColor(x_train[i], cv2.COLOR_RGB2GRAY) for i in range(len(x_train))])
-    features = np.array([get_feature(gray, hog, (4, 4)) for gray in grays])
+    features = np.array([get_feature(gray, hog, (8, 8)) for gray in grays])
     print(common.get_local_time(), "HOG特征提取完毕")
     new_features = features[:500]
     new_labels = y_train[:500]
@@ -31,11 +39,13 @@ if __name__ == "__main__":
     print(common.get_local_time(), "SVC训练完成")
     right = 0
     wrong = 0
-    for i in range(400, 800):
-        gray = cv2.cvtColor(x_test[i], cv2.COLOR_RGB2GRAY)
-        feat = get_feature(gray, hog, (4, 4))
+
+    x_cars_test = datasets.pretreatment("data/cars_test")
+    for i in x_cars_test:
+        gray = cv2.cvtColor(i, cv2.COLOR_RGB2GRAY)
+        feat = get_feature(gray, hog, (8, 8))
         y = clf.predict([feat])
-        if y[0] == y_test[i]:
+        if y[0] == 1:
             right += 1
         else:
             wrong += 1
