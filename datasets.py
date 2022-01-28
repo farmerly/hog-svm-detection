@@ -3,7 +3,8 @@ import os
 import cv2
 import numpy as np
 
-lableName = ['飞机', '汽车', '鸟', '猫', '鹿', '狗', '青蛙', '马', '船', '卡车']
+lableName = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
+
 
 def pretreatment(pathname_):
     dst_imgs_ = []
@@ -55,16 +56,9 @@ def load_CIFAR10(ROOT):
     return X_train, Y_train, X_test, Y_test
 
 
-if __name__=='__main__':
-    imgList = pretreatment("data/cars_test")
-    for img in imgList:
-        cv2.imshow('image', img)
-        cv2.waitKey(0)
-    cv2.destroyAllWindows()
-    x_train, y_train, x_test, y_test = load_CIFAR10('data/cifar10/')
+if __name__ == '__main__':
+    x_train, y_train, x_test, y_test = load_CIFAR10('data/cifar-10-batches-py/')
     print(x_train.shape)
     print(y_train.shape)
     print(x_test.shape)
     print(y_test.shape)
-
-
